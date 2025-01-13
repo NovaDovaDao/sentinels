@@ -52,3 +52,8 @@ export const saveMessage = async (payload: {
     // No need to check res.versionstamp here, just retry the loop
   }
 };
+
+export const getChatByUserId = (userId: string, agentId?: string) => {
+  const key = ["chat", userId, agentId ?? "general"];
+  return kv.get<Chat>(key);
+};
