@@ -1,24 +1,15 @@
-const kv = await Deno.openKv();
+import { Chat, Message, Sender } from "./types.ts";
 
-type Sender = "user" | "agent";
-type Message = {
-  sender: Sender;
-  content: string;
-  messageId: string;
-  timestamp: number;
-};
-
-type Chat = {
-  messages: Message[];
-};
+const kv = await Deno.openKv(Deno.env.get("DENO_KV_PATH"));
 
 export const saveMessage = async (payload: {
   userId: string;
+  agentId?: string;
   messageId: string;
   content: string;
   sender: Sender;
 }) => {
-  const key = ["chat", payload.userId];
+  const key = ["chat", payload.userId, payload.agentId ?? "general"];
   const message = {
     sender: payload.sender,
     content: payload.content,
@@ -60,10 +51,4 @@ export const saveMessage = async (payload: {
     }
     // No need to check res.versionstamp here, just retry the loop
   }
-};
-
-export const getConversation = async (userId: string) => {
-  const key = ["chat", userId];
-  const res = await kv.get<Chat>(key);
-  return res.value?.messages ?? []; // Return messages array or empty array
 };
