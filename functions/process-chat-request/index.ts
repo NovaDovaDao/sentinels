@@ -12,7 +12,7 @@ export async function processChatRequest() {
       const history = await getChatByUserId(parsedMessage.userId);
       /**
        *
-       * ask agent
+       * ask agent here
        */
       // const agentResponse = await queryAgentWithHistory(history)
       const saveMessageResponse = await saveMessage({
