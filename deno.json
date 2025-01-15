@@ -1,6 +1,7 @@
 {
   "tasks": {
-    "dev": "deno run --watch -A --unstable-kv functions/process-chat-message/index.ts"
+    "dev-input": "deno run --watch -A --unstable-kv functions/process-chat-input/index.ts",
+    "dev-request": "deno run --watch -A --unstable-kv functions/process-chat-request/index.ts"
   },
   "imports": {
     "@std/assert": "jsr:@std/assert@1"

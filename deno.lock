@@ -3,9 +3,12 @@
   "specifiers": {
     "jsr:@std/async@1": "1.0.9",
     "jsr:@std/bytes@1": "1.0.4",
+    "jsr:@std/bytes@^1.0.2": "1.0.4",
     "jsr:@std/bytes@^1.0.2-rc.3": "1.0.4",
+    "jsr:@std/crypto@^1.0.3": "1.0.3",
     "jsr:@std/dotenv@*": "0.225.3",
-    "jsr:@std/io@0.224.5": "0.224.5"
+    "jsr:@std/io@0.224.5": "0.224.5",
+    "jsr:@std/uuid@*": "1.0.4"
   },
   "jsr": {
     "@std/async@1.0.9": {
@@ -14,6 +17,9 @@
     "@std/bytes@1.0.4": {
       "integrity": "11a0debe522707c95c7b7ef89b478c13fb1583a7cfb9a85674cd2cc2e3a28abc"
     },
+    "@std/crypto@1.0.3": {
+      "integrity": "a2a32f51ddef632d299e3879cd027c630dcd4d1d9a5285d6e6788072f4e51e7f"
+    },
     "@std/dotenv@0.225.3": {
       "integrity": "a95e5b812c27b0854c52acbae215856d9cce9d4bbf774d938c51d212711e8d4a"
     },
@@ -21,6 +27,13 @@
       "integrity": "cb84fe655d1273fca94efcff411465027a8b0b4225203f19d6ee98d9c8920a2d",
       "dependencies": [
         "jsr:@std/bytes@^1.0.2-rc.3"
+      ]
+    },
+    "@std/uuid@1.0.4": {
+      "integrity": "f4233149cc8b4753cc3763fd83a7c4101699491f55c7be78dc7b30281946d7a0",
+      "dependencies": [
+        "jsr:@std/bytes@^1.0.2",
+        "jsr:@std/crypto"
       ]
     }
   },
