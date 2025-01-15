@@ -1,4 +1,4 @@
-import { Chat, Message, Sender } from "./types.ts";
+import { Message, Sender } from "./types.ts";
 
 const kv = await Deno.openKv(Deno.env.get("DENO_KV_PATH"));
 
@@ -9,51 +9,35 @@ export const saveMessage = async (payload: {
   content: string;
   sender: Sender;
 }) => {
-  const key = ["chat", payload.userId, payload.agentId ?? "general"];
-  const message = {
+  const key = [
+    payload.userId,
+    "chat",
+    payload.agentId ?? "general",
+    payload.messageId,
+  ];
+  const value = {
     sender: payload.sender,
     content: payload.content,
     timestamp: Date.now(),
     messageId: payload.messageId,
   } satisfies Message;
 
-  while (true) {
-    const existingValue = await kv.get(key);
+  const res = await kv
+    .atomic()
+    .check({ key, versionstamp: null }) // Correctly uses existingValue
+    .set(key, value)
+    .commit();
 
-    if (existingValue.value === null) {
-      const res = await kv.set(key, { messages: [message] });
-      if (res.ok) {
-        return { ok: true, messageId: payload.messageId };
-      }
-      continue; // Retry if set failed (very unlikely)
-    }
-
-    const res = await kv
-      .atomic()
-      .check(existingValue) // Correctly uses existingValue
-      .set(key, (oldValue: Chat) => {
-        if (
-          !oldValue ||
-          !("messages" in oldValue) ||
-          !Array.isArray(oldValue.messages)
-        ) {
-          return { messages: [message] }; // Handle edge cases
-        }
-        if (oldValue.messages.some((m) => m.messageId === payload.messageId)) {
-          return oldValue; // Message already exists
-        }
-        return { messages: [...oldValue.messages, message] };
-      })
-      .commit();
-
-    if (res.ok) {
-      return { ok: true, messageId: payload.messageId };
-    }
-    // No need to check res.versionstamp here, just retry the loop
+  if (res.ok) {
+    return { ok: true, messageId: payload.messageId };
   }
 };
 
-export const getChatByUserId = (userId: string, agentId?: string) => {
-  const key = ["chat", userId, agentId ?? "general"];
-  return kv.get<Chat>(key);
+export const getMessagesByUserId = async (userId: string, agentId?: string) => {
+  const prefix = [userId, "chat", agentId || "general"];
+  const iter = kv.list<Message>({ prefix }, { limit: 50 });
+
+  const messages = [];
+  for await (const res of iter) messages.push(res);
+  return messages;
 };

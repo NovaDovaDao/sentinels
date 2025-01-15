@@ -5,7 +5,3 @@ export type Message = {
   messageId: string;
   timestamp: number;
 };
-
-export type Chat = {
-  messages: Message[];
-};
